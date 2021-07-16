@@ -4,20 +4,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import BasicAuthentication
 
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 
 from api import serializers, models
 
 
-class ConexaoViewSet(generics.ListAPIView):
-    queryset = models.Conexao.objects.all()
-    serializer_class = serializers.ConexaoSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [BasicAuthentication]
-
-
-class EmailViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIView):
+class EmailViewSet(viewsets.ViewSet, generics.CreateAPIView):
     queryset = models.Email.objects.all()
     serializer_class = serializers.EmailSerializer
     permission_classes = [IsAuthenticated]
@@ -42,12 +35,14 @@ class EmailViewSet(viewsets.ViewSet, generics.ListAPIView, generics.CreateAPIVie
         settings.EMAIL_HOST_USER = email
         settings.EMAIL_HOST_PASSWORD = senha
 
-        EmailMessage(
+        msg = EmailMultiAlternatives(
             subject=assunto,
             body=mensagem,
             from_email=settings.EMAIL_HOST_USER,
             to=para
-        ).send()
+        )
+        msg.attach_alternative(mensagem, "text/html")
+        msg.send()
 
         headers = self.get_success_headers(serializer.data)
         return Response(

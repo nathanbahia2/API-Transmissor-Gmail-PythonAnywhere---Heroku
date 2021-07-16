@@ -10,5 +10,4 @@ router.register('emails', views.EmailViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('api/conexoes', views.ConexaoViewSet.as_view()),
 ]
