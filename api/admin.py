@@ -7,6 +7,7 @@ from api import models
 class ConexaoAdmin(admin.ModelAdmin):
     list_display = ['descricao', 'email']
 
+
 @admin.register(models.Email)
 class EmailAdmin(admin.ModelAdmin):
     list_display = ['data', 'de', 'para', 'assunto']
